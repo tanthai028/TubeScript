@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "YT Transcriber",
+  "name": "TubeScript",
   "version": "0.4.1",
   "description": "Shows the transcript of the YouTube video you're watching, from YouTube's own captions. No servers, no keys.",
   "minimum_chrome_version": "111",

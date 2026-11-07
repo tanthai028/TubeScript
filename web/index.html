@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>YT Transcriber</title>
+    <title>TubeScript</title>
     <meta name="description" content="Transcripts of YouTube videos, with clickable timestamps, search, copy and download. Works on iPhone and iPad." />
     <style>
       :root {
@@ -45,7 +45,7 @@
   </head>
   <body>
     <main>
-      <h1>YT Transcriber</h1>
+      <h1>TubeScript</h1>
       <p class="lede">
         The transcript of the YouTube video you're watching, with clickable timestamps, search, copy and download.
         It runs inside the YouTube page in your browser, using YouTube's own captions. Nothing is sent anywhere except YouTube.
@@ -55,10 +55,10 @@
         <h2>1. Get the bookmarklet</h2>
         <div class="row">
           <button id="copy" type="button">Copy bookmarklet</button>
-          <a class="drag" id="drag" href="#" title="Drag me to your bookmarks bar">YT Transcript</a>
+          <a class="drag" id="drag" href="#" title="Drag me to your bookmarks bar">TubeScript</a>
           <span class="ok" id="copied" hidden>Copied</span>
         </div>
-        <p class="muted">On a computer you can drag <strong>YT Transcript</strong> to your bookmarks bar instead. The code, if you'd rather copy it yourself:</p>
+        <p class="muted">On a computer you can drag <strong>TubeScript</strong> to your bookmarks bar instead. The code, if you'd rather copy it yourself:</p>
         <textarea id="code" readonly aria-label="Bookmarklet code"></textarea>
       </section>
 
@@ -68,7 +68,7 @@
           <li>Tap <strong>Copy bookmarklet</strong> above.</li>
           <li>Bookmark this page: Share button → <strong>Add Bookmark</strong> → Save.</li>
           <li>Open Bookmarks (the book icon) → <strong>Edit</strong> → tap the new bookmark.</li>
-          <li>Rename it <code>YT Transcript</code>, clear the address, paste the copied code, then tap <strong>Done</strong>.</li>
+          <li>Rename it <code>TubeScript</code>, clear the address, paste the copied code, then tap <strong>Done</strong>.</li>
         </ol>
       </section>
 
@@ -81,7 +81,7 @@
           </li>
           <li>
             Open the <strong>Bookmarks list</strong> (book icon; on iPhone it's under the tabs or ⋯ button) and tap
-            <strong>YT Transcript</strong> there. The transcript appears at the top right of the page.
+            <strong>TubeScript</strong> there. The transcript appears at the top right of the page.
           </li>
           <li>Tap a timestamp to jump there. Tap the bookmark again to hide or show the panel.</li>
         </ol>
@@ -103,12 +103,12 @@
       // YouTube's Trusted Types rule needs the code wrapped by a policy before eval.
       const src = location.origin + '/bookmarklet.js';
       const loader =
-        "(()=>{if(!/(^|\\.)(youtube\\.com|youtube-nocookie\\.com)$/.test(location.hostname))return alert('YT Transcriber works on YouTube pages; this page is '+location.hostname+'. Open the video on youtube.com in Safari, then tap the bookmark.');" +
+        "(()=>{if(!/(^|\\.)(youtube\\.com|youtube-nocookie\\.com)$/.test(location.hostname))return alert('TubeScript works on YouTube pages; this page is '+location.hostname+'. Open the video on youtube.com in Safari, then tap the bookmark.');" +
         'if(window.__ytTranscriber)return window.__ytTranscriber.toggle();' +
         `fetch(${JSON.stringify(src)},{cache:'no-store'})` +
         ".then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.text()})" +
         ".then(c=>{const t=window.trustedTypes,p=t&&t.createPolicy?t.createPolicy('yt-transcriber-'+Date.now(),{createScript:s=>s}):null;(0,eval)(p?p.createScript(c):c)})" +
-        ".catch(e=>alert('YT Transcriber could not load: '+e.message))})()";
+        ".catch(e=>alert('TubeScript could not load: '+e.message))})()";
       const bookmarklet = 'javascript:' + encodeURIComponent(loader);
 
       document.getElementById('drag').href = bookmarklet;

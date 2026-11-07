@@ -1,10 +1,10 @@
-# yt-transcriber
+# TubeScript
 
 **Read, search and copy the transcript of any YouTube video, with clickable timestamps. Works as a Chrome extension on desktop and as a bookmarklet on iPhone and iPad.**
 
 TypeScript · React 19 · Chrome Manifest V3 · esbuild · Node test runner · Vercel · no backend, no API keys, $0 to run
 
-<img src="docs/popup.png" alt="yt-transcriber popup showing a transcript with timestamps, caption picker, search, copy and download" width="340">
+<img src="docs/popup.png" alt="TubeScript popup showing a transcript with timestamps, caption picker, search, copy and download" width="340">
 
 *The Chrome popup: pick a caption track, search, click any timestamp to jump there, or copy/download the text.*
 
@@ -41,7 +41,7 @@ Observed on live YouTube during development (not a formal benchmark): a 23-minut
 
 - **All YouTube-specific code is isolated in [`src/extractor/`](src/extractor/).** When YouTube changes something, there's one place to fix. The UI only sees a small interface: `getVideoInfo`, `getTranscript`, `seekTo`.
 - **One extractor, two products.** The Chrome extension and the iPhone bookmarklet share the same page-side code; esbuild builds both from one `build.mjs`.
-- **Pure parsers, tested against real responses.** 57 unit tests run on Node's built-in test runner, with saved real YouTube responses as fixtures (JSON3 and XML captions, manual and auto-generated tracks).
+- **Pure parsers, tested against real responses.** 69 unit tests run on Node's built-in test runner, with saved real YouTube responses as fixtures (JSON3 and XML captions, manual and auto-generated tracks).
 - **Errors over wrong answers.** If a response is empty, cut off or unreadable, the user gets a specific error explaining which part failed, never a partial transcript.
 - **Privacy by design.** Every request goes to `www.youtube.com`, made the same way the page makes it. Nothing is collected or sent anywhere else.
 - **Honest documentation.** Known limitations and unverified paths are written down below, along with a [manual test checklist](docs/manual-test-checklist.md) for live testing.
@@ -132,10 +132,10 @@ after changes; bookmarklets pick up the new code automatically.
 
 1. Open your site in Safari and tap **Copy bookmarklet**.
 2. Bookmark that page: Share → **Add Bookmark** → Save.
-3. Open the Bookmarks list → **Edit** → tap the new bookmark. Rename it `YT Transcript`, replace its
+3. Open the Bookmarks list → **Edit** → tap the new bookmark. Rename it `TubeScript`, replace its
    address with the copied code, and tap **Done**.
 
-On a computer, drag **YT Transcript** from the install page to the bookmarks bar.
+On a computer, drag **TubeScript** from the install page to the bookmarks bar.
 
 **Use on iPhone or iPad**
 
@@ -144,7 +144,7 @@ On a computer, drag **YT Transcript** from the install page to the bookmarks bar
    `youtube.com/watch?v=…`, Shorts (`/shorts/…`), `youtu.be/…` links, `/live/…`, and links with
    `&t=`, `&list=` or `&si=`. The video doesn't need to be playing.
 2. Open the **Bookmarks list** (book icon; on iPhone it's under the tabs or ⋯ button) and tap
-   **YT Transcript** there. Don't start it from the address bar: Safari blocks bookmarklets started
+   **TubeScript** there. Don't start it from the address bar: Safari blocks bookmarklets started
    that way and shows "Cannot Run Script".
 3. The panel appears at the top right. Tap a timestamp to seek; tap the bookmark again to hide or show it.
 

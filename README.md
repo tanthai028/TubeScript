@@ -259,6 +259,6 @@ and add a test before changing a parser.
 
 ## About
 
-Built by **Tan Thai**. | [Portfolio](https://tan-portfolio-taupe.vercel.app) | [LinkedIn](https://linkedin.com/in/tanthai028) | [GitHub](https://github.com/tanthai028)
+Built by **Tan Thai**. | [Portfolio](https://tanhthai.com) | [LinkedIn](https://linkedin.com/in/tanthai028) | [GitHub](https://github.com/tanthai028)
 
 Other projects: [YTBookmarks](https://github.com/tanthai028/YTBookmark) (bookmarks on YouTube's timeline, on the Chrome Web Store) · [Stride](https://github.com/tanthai028/stride-desktop-app) · [RJ Job Tracker](https://github.com/tanthai028/RJTracker)

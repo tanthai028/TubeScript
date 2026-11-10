@@ -3,9 +3,10 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 
 import { parseJson3 } from '../src/extractor/parsers.ts';
-import { formatTimestamp, transcriptFile, transcriptFilename, transcriptToText } from '../src/format.ts';
+import { formatTimestamp, transcriptFile, transcriptFilename, transcriptToParagraphs, transcriptToText } from '../src/format.ts';
 
 const zoo = parseJson3(readFileSync(new URL('./fixtures/json3-manual-en.json', import.meta.url), 'utf8'));
+const asr = parseJson3(readFileSync(new URL('./fixtures/json3-asr-en.json', import.meta.url), 'utf8'));
 
 describe('timestamps', () => {
   it('formatTimestamp', () => {
@@ -27,8 +28,29 @@ describe('export', () => {
     assert.equal(lines[5], "[0:16] and that's pretty much all there is to say");
   });
 
-  it('without timestamps is exactly the caption text', () => {
-    assert.equal(transcriptToText(zoo, false), zoo.map((s) => s.text).join('\n'));
+  it('without timestamps joins captions into flowing paragraphs', () => {
+    // No pause of 2 s or more and no speaker change in this clip: one paragraph.
+    assert.equal(transcriptToText(zoo, false), zoo.map((s) => s.text).join(' '));
+  });
+
+  it('without timestamps keeps every word, in order', () => {
+    const words = (s: string) => s.split(/\s+/).filter(Boolean);
+    assert.deepEqual(words(transcriptToText(asr, false)), words(asr.map((s) => s.text).join(' ')));
+  });
+
+  it('starts a new paragraph at a speaker change', () => {
+    const paragraphs = transcriptToParagraphs(asr);
+    assert.equal(paragraphs[0], 'Deepest secret.');
+    assert.equal(paragraphs[1], '>> Energy.');
+    assert.ok(paragraphs[2]!.startsWith('>> Wait, that could actually work.'));
+  });
+
+  it('starts a new paragraph after a long pause, or at a sentence end once long', () => {
+    const seg = (startMs: number, text: string, durMs = 1000) => ({ startMs, durMs, text });
+    assert.deepEqual(transcriptToParagraphs([seg(0, 'one'), seg(1000, 'two'), seg(5000, 'three')]), ['one two', 'three']);
+    const long = 'x'.repeat(500);
+    assert.deepEqual(transcriptToParagraphs([seg(0, `${long}.`), seg(1000, 'next'), seg(2000, 'more')]), [`${long}.`, 'next more']);
+    assert.deepEqual(transcriptToParagraphs([seg(0, long), seg(1000, 'mid'), seg(2000, 'end')]), [`${long} mid end`]);
   });
 
   it('uses h:mm:ss throughout when the transcript passes one hour', () => {

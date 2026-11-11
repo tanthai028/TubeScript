@@ -177,6 +177,7 @@ src/format.ts, search.ts    timestamps, TXT export, transcript search
 test/                       unit tests; test/fixtures/ holds real YouTube responses
 docs/manual-test-checklist.md
 scripts/capture-transcript-panel.js   dev helper for checking the panel fallback
+icons/                      extension icon and site favicon (PNG), drawn by scripts/make-icons.mjs
 ```
 
 | Command | What it does |

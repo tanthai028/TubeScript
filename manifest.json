@@ -6,7 +6,12 @@
   "minimum_chrome_version": "111",
   "permissions": ["storage"],
   "host_permissions": ["https://www.youtube.com/*"],
-  "action": { "default_title": "Show transcript (Alt+T)", "default_popup": "popup.html" },
+  "icons": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
+  "action": {
+    "default_title": "Show transcript (Alt+T)",
+    "default_popup": "popup.html",
+    "default_icon": { "16": "icons/icon16.png", "32": "icons/icon32.png" }
+  },
   "commands": {
     "_execute_action": { "suggested_key": { "default": "Alt+T" } }
   },

@@ -2,7 +2,7 @@
 //   dist/      the Chrome extension (load unpacked)
 //   dist-web/  the static site for Vercel: install page + bookmarklet bundle
 // Usage: node build.mjs [--watch]
-import { copyFile, mkdir, rm } from 'node:fs/promises';
+import { copyFile, cp, mkdir, rm } from 'node:fs/promises';
 import * as esbuild from 'esbuild';
 
 const watch = process.argv.includes('--watch');
@@ -14,6 +14,9 @@ for (const dir of ['dist', 'dist-web']) {
 await copyFile('manifest.json', 'dist/manifest.json');
 await copyFile('src/popup/popup.html', 'dist/popup.html');
 await copyFile('web/index.html', 'dist-web/index.html');
+// Icons come from scripts/make-icons.mjs (committed PNGs, so building needs no image tools).
+await cp('icons', 'dist/icons', { recursive: true });
+await cp('icons', 'dist-web/icons', { recursive: true });
 
 /** @type {import('esbuild').BuildOptions} */
 const common = {

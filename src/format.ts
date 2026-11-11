@@ -15,41 +15,54 @@ export function formatTimestamp(ms: number, forceHours = false): string {
 const PARAGRAPH_GAP_MS = 2000;
 /** Past this length, a paragraph also ends at the next sentence end. */
 const PARAGRAPH_SOFT_MAX = 500;
+/** Shorter paragraphs when each one gets a timestamp, so timestamps stay useful (every ~10-15 s). */
+const TIMESTAMPED_SOFT_MAX = 200;
+
+export interface Paragraph {
+  startMs: number;
+  text: string;
+}
 
 /**
- * Captions are short screen-width fragments, so plain text joins them into paragraphs: a new one
+ * Captions are short screen-width fragments, so exports join them into paragraphs: a new one
  * starts at a speaker change (">>"), a long pause, or a sentence end once the paragraph is long.
  * Text is never changed, only the whitespace between captions.
  */
-export function transcriptToParagraphs(segments: readonly Segment[]): string[] {
-  const paragraphs: string[] = [];
-  let current = '';
+export function groupParagraphs(segments: readonly Segment[], softMax = PARAGRAPH_SOFT_MAX): Paragraph[] {
+  const paragraphs: Paragraph[] = [];
+  let current: Paragraph | null = null;
   let prevEnd = -Infinity;
   for (const s of segments) {
     const breakHere =
-      current !== '' &&
+      current !== null &&
       (s.text.startsWith('>>') ||
         s.startMs - prevEnd >= PARAGRAPH_GAP_MS ||
-        (current.length >= PARAGRAPH_SOFT_MAX && /[.!?…]["')\]]?$/.test(current)));
+        (current.text.length >= softMax && /[.!?…]["')\]]?$/.test(current.text)));
     if (breakHere) {
-      paragraphs.push(current);
-      current = '';
+      paragraphs.push(current!);
+      current = null;
     }
-    current = current ? `${current} ${s.text}` : s.text;
+    current = current ? { startMs: current.startMs, text: `${current.text} ${s.text}` } : { startMs: s.startMs, text: s.text };
     prevEnd = s.startMs + s.durMs;
   }
   if (current) paragraphs.push(current);
   return paragraphs;
 }
 
+export function transcriptToParagraphs(segments: readonly Segment[]): string[] {
+  return groupParagraphs(segments).map((p) => p.text);
+}
+
 /**
- * Timestamps on: one caption per line, prefixed with "[m:ss] ". Timestamps off: flowing paragraphs
- * separated by a blank line. Text is never changed.
+ * Paragraphs separated by a blank line. With timestamps, shorter paragraphs, each starting with
+ * "[m:ss] " (the time of its first caption). Text is never changed.
  */
 export function transcriptToText(segments: readonly Segment[], timestamps: boolean): string {
   if (!timestamps) return transcriptToParagraphs(segments).join('\n\n');
   const hours = segments.some((s) => s.startMs >= 3_600_000);
-  return segments.map((s) => `[${formatTimestamp(s.startMs, hours)}] ${s.text}`).join('\n');
+  return groupParagraphs(segments, TIMESTAMPED_SOFT_MAX)
+    .map((p) => `[${formatTimestamp(p.startMs, hours)}] ${p.text}`)
+    .join('\n\n');
 }
 
 export interface ExportMeta {

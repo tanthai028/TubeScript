@@ -21,11 +21,21 @@ describe('timestamps', () => {
 });
 
 describe('export', () => {
-  it('with timestamps', () => {
-    const lines = transcriptToText(zoo, true).split('\n');
-    assert.equal(lines.length, 6);
-    assert.equal(lines[0], '[0:01] All right, so here we are, in front of the elephants');
-    assert.equal(lines[5], "[0:16] and that's pretty much all there is to say");
+  it('with timestamps: paragraphs, each starting with its first caption time', () => {
+    // Short clip, no pause or speaker change: one paragraph.
+    assert.equal(transcriptToText(zoo, true), `[0:01] ${zoo.map((s) => s.text).join(' ')}`);
+    const asrParagraphs = transcriptToText(asr, true).split('\n\n');
+    assert.equal(asrParagraphs[0], '[0:00] Deepest secret.');
+    assert.equal(asrParagraphs[1], '[0:01] >> Energy.');
+    assert.ok(asrParagraphs[2]!.startsWith('[0:02] >> Wait, that could actually work.'));
+  });
+
+  it('with timestamps: shorter paragraphs than plain text', () => {
+    const seg = (startMs: number, text: string) => ({ startMs, durMs: 1000, text });
+    const sentence = `${'y'.repeat(200)}.`;
+    const segs = [seg(0, sentence), seg(1000, 'b.'), seg(2000, 'c.')];
+    assert.equal(transcriptToText(segs, true), `[0:00] ${sentence}\n\n[0:01] b. c.`);
+    assert.equal(transcriptToText(segs, false), `${sentence} b. c.`);
   });
 
   it('without timestamps joins captions into flowing paragraphs', () => {
@@ -61,7 +71,7 @@ describe('export', () => {
       ],
       true,
     );
-    assert.equal(text, '[0:00:05] a\n[1:01:40] b');
+    assert.equal(text, '[0:00:05] a\n\n[1:01:40] b');
   });
 
   it('file has a header then the transcript', () => {
